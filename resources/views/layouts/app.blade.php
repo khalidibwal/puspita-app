@@ -75,6 +75,7 @@
                 <li><a href="{{ route('obats.index') }}">List Obat</a></li>
                 <li><a href="{{ route('polikliniks.index') }}">List Poliklinik</a></li>
                 <li><a href="{{ route('rekammedis.index') }}">Rekam Medis</a></li>
+                <li><a href="{{ route('non_bookantrian.index') }}">Non-Booking</a></li>
             </ul>
         </nav>
 

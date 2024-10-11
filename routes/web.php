@@ -13,6 +13,7 @@ use App\Http\Controllers\MedikaPasienController;
 use App\Http\Controllers\MedikaObatController;
 use App\Http\Controllers\MedikaPoliklinikController;
 use App\Http\Controllers\RekamMedisController;
+use App\Http\Controllers\NonBookAntrianController;
 use App\Http\Controllers\DashboardController;
 
 
@@ -33,7 +34,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::resource('admin/pasiens', MedikaPasienController::class); 
     Route::resource('admin/obats', MedikaObatController::class); 
     Route::resource('admin/polikliniks', MedikaPoliklinikController::class); 
-    Route::resource('admin/rekammedis', RekamMedisController::class); 
+    Route::resource('admin/rekammedis', RekamMedisController::class);
+    Route::resource('admin/non_bookantrian', NonBookAntrianController::class); 
 });
 //login example
 Route::get('/loginpuspita', [LoginController::class, 'showLoginForm'])->name('login.puspita');
