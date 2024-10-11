@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ApiUser; // Ensure you have the User model imported
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator; // Add this line
+use Illuminate\Validation\ValidationException; // Import ValidationException
 
 class AuthController extends Controller
 {

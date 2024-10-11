@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('pasien', function (Blueprint $table) {
             $table->increments('idPasien');
-            // Adding the required fields
+            // Add foreign key to user_app table
             $table->string('namaPasien');
             $table->string('NIK')->unique();
             $table->string('jenisKelamin');

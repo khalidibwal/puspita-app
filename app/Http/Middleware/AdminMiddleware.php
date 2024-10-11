@@ -22,6 +22,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return redirect('/home')->with('error', 'You have no admin access.');
+        return redirect('/loginMedika')->with('error', 'You have no admin access.');
     }
 }

@@ -9,7 +9,8 @@ use Laravel\Sanctum\HasApiTokens; // Add this line
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ApiUser extends Model
+
+class ApiUser extends Authenticatable
 {
     use HasFactory,HasApiTokens, Notifiable;
     protected $table = 'user_app';

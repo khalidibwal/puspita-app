@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\DokterController;
 use App\Http\Controllers\Api\ObatController;
 use App\Http\Controllers\Api\PoliklinikController;
 use App\Http\Controllers\Api\RM_Controller;
+use App\Http\Controllers\Api\Book_pasienController;
+use App\Http\Controllers\Api\Book_antrianController;
 use App\Http\Controllers\API\AuthController;
 
 /*
@@ -39,6 +41,18 @@ Route::post('/login', [AuthController::class, 'login']);       // Login existing
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']); // Logout user
     Route::get('/me', [AuthController::class, 'me']);          // Get authenticated user profile
+    // BookPasien routes
+    Route::get('bookpasiens', [Book_pasienController::class, 'index']);
+    Route::post('bookpasiens', [Book_pasienController::class, 'store']);
+    Route::get('/bookpasiens/{userId}', [Book_pasienController::class, 'show']);
+    Route::put('bookpasiens/{id}', [Book_pasienController::class, 'update']);
+    Route::delete('bookpasiens/{id}', [Book_pasienController::class, 'destroy']);
+    //BookAntrian Routes
+    Route::get('/bookantrian', [Book_antrianController::class, 'index']);
+    Route::post('/bookantrian', [Book_antrianController::class, 'store']);
+    Route::get('/bookantrian/{id}', [Book_antrianController::class, 'show']);
+    Route::put('/bookantrian/{id}', [Book_antrianController::class, 'update']);
+    Route::delete('/bookantrian/{id}', [Book_antrianController::class, 'destroy']);
 });
 
 //API for DOKTER
