@@ -11,6 +11,19 @@
         @csrf
 
         <div class="form-group mb-4">
+            <label for="pasien_id" class="text-white">Pilih Pasien:</label>
+            <select name="pasien_id" id="pasien_id" required class="form-input">
+                <option value="">-- Pilih Pasien --</option>
+                @foreach ($pasiens as $pasien)
+                    <option value="{{ $pasien->idPasien }}">{{ $pasien->namaPasien }}</option>
+                @endforeach
+            </select>
+            @error('pasien_id')
+                <div class="text-red-500">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group mb-4">
             <label for="keluhan" class="text-white">Keluhan:</label>
             <input type="text" name="keluhan" id="keluhan" required class="form-input">
             @error('keluhan')
@@ -63,7 +76,7 @@
         }
 
         .submit-btn {
-            background-color: #4CAF50; /* Green */
+            background-color: #4CAF50;
             color: white;
             padding: 10px 20px;
             border: none;

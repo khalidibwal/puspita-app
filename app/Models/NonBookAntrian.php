@@ -17,12 +17,12 @@ class NonBookAntrian extends Model
         'keluhan',
         'tanggal_kunjungan',
         'status',
-        'user_id',
+        'pasien_id',
     ];
 
     // Define the relationship with the UserLogin model
     public function user()
     {
-        return $this->belongsTo(UserLogin::class, 'user_id', 'idUser');
+        return $this->belongsTo(medikaPasien::class, 'pasien_id', 'idPasien');
     }
 }

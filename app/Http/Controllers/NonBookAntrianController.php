@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\NonBookAntrian;
+use App\Models\medikaPasien;
 use Illuminate\Http\Request;
 
 class NonBookAntrianController extends Controller
@@ -16,9 +17,10 @@ class NonBookAntrianController extends Controller
     {
         // Get all non-bookantrian records from the database
         $nonBookAntrians = NonBookAntrian::all();
+        $pasiens = medikaPasien::all();
 
         // Return the view with non-bookantrian data
-        return view('admin.NonBookAntrian.index', compact('nonBookAntrians'));
+        return view('admin.NonBookAntrian.index', compact('nonBookAntrians','pasiens'));
     }
 
     /**
@@ -28,8 +30,9 @@ class NonBookAntrianController extends Controller
      */
     public function create()
     {
+        $pasiens = medikaPasien::all();
         // Return the view to create a new non-bookantrian record
-        return view('admin.NonBookAntrian.create');
+        return view('admin.NonBookAntrian.create',compact('pasiens'));
     }
 
     /**
@@ -39,48 +42,48 @@ class NonBookAntrianController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function store(Request $request)
-    {
-        // Validate the request data
-        $validatedData = $request->validate([
-            'keluhan' => 'required|string',
-            'tanggal_kunjungan' => 'required|date',
-            'status' => 'nullable|string|max:50',
-        ]);
-    
-        // Get the last non-bookantrian record's no_antrian and tanggal_kunjungan
-        $lastRecord = NonBookAntrian::orderBy('id', 'desc')->first();
-    
-        // Generate the next no_antrian
-        $nextNoAntrian = 'B1'; // Default value
-        $newDate = \Carbon\Carbon::parse($request->tanggal_kunjungan); // Use fully qualified class name
-    
-        if ($lastRecord) {
-            // Extract the date and no_antrian
-            $lastDate = \Carbon\Carbon::parse($lastRecord->tanggal_kunjungan); // Use fully qualified class name
-            $lastNoAntrian = $lastRecord->no_antrian;
-    
-            // Check if the new date is different from the last record's date
-            if ($newDate->toDateString() !== $lastDate->toDateString()) {
-                // Reset no_antrian to B1 if the date is different
-                $nextNoAntrian = 'B1';
-            } else {
-                // Extract the numeric part and increment
-                $lastNumber = intval(substr($lastNoAntrian, 1)); // Remove the 'B' and convert to integer
-                $nextNumber = $lastNumber + 1; // Increment
-                $nextNoAntrian = 'B' . $nextNumber; // Create new no_antrian
-            }
-        }
-    
-        // Store the new non-bookantrian record in the database
-        NonBookAntrian::create(array_merge($validatedData, [
-            'no_antrian' => $nextNoAntrian,
-            'user_id' => auth()->id()
-        ]));
-    
-        // Redirect to the index page with success message
-        return redirect()->route('non_bookantrian.index')->with('success', 'Non-BookAntrian record created successfully.');
-    }
+     public function store(Request $request)
+     {
+         // Validate the request data, including the pasienId
+         $validatedData = $request->validate([
+             'pasien_id' => 'required|exists:pasien,idPasien', // Validate pasien_id exists in the pasien table
+             'keluhan' => 'required|string',
+             'tanggal_kunjungan' => 'required|date',
+             'status' => 'nullable|string|max:50',
+         ]);
+     
+         // Get the last non-bookantrian record's no_antrian and tanggal_kunjungan
+         $lastRecord = NonBookAntrian::orderBy('id', 'desc')->first();
+     
+         // Generate the next no_antrian
+         $nextNoAntrian = 'B1'; // Default value
+         $newDate = \Carbon\Carbon::parse($request->tanggal_kunjungan); // Parse the date
+     
+         if ($lastRecord) {
+             // Extract the date and no_antrian
+             $lastDate = \Carbon\Carbon::parse($lastRecord->tanggal_kunjungan);
+             $lastNoAntrian = $lastRecord->no_antrian;
+     
+             // Check if the new date is different from the last record's date
+             if ($newDate->toDateString() !== $lastDate->toDateString()) {
+                 $nextNoAntrian = 'B1'; // Reset no_antrian for a new day
+             } else {
+                 // Increment the numeric part of no_antrian
+                 $lastNumber = intval(substr($lastNoAntrian, 1)); // Remove the 'B' and convert to integer
+                 $nextNumber = $lastNumber + 1;
+                 $nextNoAntrian = 'B' . $nextNumber; // Create new no_antrian
+             }
+         }
+     
+         // Store the new non-bookantrian record with pasien_id
+         NonBookAntrian::create(array_merge($validatedData, [
+             'no_antrian' => $nextNoAntrian,
+         ]));
+     
+         // Redirect to the index page with a success message
+         return redirect()->route('non_bookantrian.index')->with('success', 'Non-BookAntrian record created successfully.');
+     }
+     
     
 
 

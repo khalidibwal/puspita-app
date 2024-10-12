@@ -15,6 +15,7 @@
         <thead>
             <tr>
                 <th>ID Antrian</th>
+                <th>Nama Pasien</th>
                 <th>Keluhan</th>
                 <th>Tanggal Kunjungan</th>
                 <th>Status</th>
@@ -25,8 +26,17 @@
             @foreach ($nonBookAntrians as $nonBookAntrian)
                 <tr>
                     <td>{{ $nonBookAntrian->no_antrian }}</td>
+                    <td class="border px-4 py-2">
+                        <!-- Find the corresponding Pasien by pasien_id -->
+                        @foreach ($pasiens as $pasien)
+                            @if ($pasien->idPasien == $nonBookAntrian->pasien_id)
+                                {{ $pasien->namaPasien }}
+                            @endif
+                        @endforeach
+                    </td>
                     <td>{{ $nonBookAntrian->keluhan }}</td>
                     <td>{{ \Carbon\Carbon::parse($nonBookAntrian->tanggal_kunjungan)->format('d-m-Y') }}</td>
+                    
                     <td>{{ $nonBookAntrian->status }}</td>
                     <td>
                         <a href="{{ route('non_bookantrian.edit', $nonBookAntrian->id) }}" class="edit-btn">Edit</a>

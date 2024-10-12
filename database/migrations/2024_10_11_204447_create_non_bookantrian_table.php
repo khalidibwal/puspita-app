@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('keluhan'); // Complaint or reason
             $table->date('tanggal_kunjungan'); // Date of the visit
             $table->string('status', 50)->default('PENDING'); // Status of the booking
-            // Foreign key reference to userlogin table (userId)
-            $table->unsignedBigInteger('user_id'); // The ID of the user from userlogin table
-            $table->foreign('user_id')->references('idUser')->on('userlogin')->onDelete('cascade'); // Foreign key constraint
+            // Foreign key reference to pasien table (idPasien)
+            $table->unsignedInteger('pasien_id'); // The ID of the patient from pasien table
+            $table->foreign('pasien_id')->references('idPasien')->on('pasien')->onDelete('cascade'); // Foreign key constraint
             $table->timestamps(); // Laravel's created_at and updated_at fields
         });
     }
