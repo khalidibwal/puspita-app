@@ -128,15 +128,19 @@
                     <li><a href="{{ route('dokters.index') }}">List Dokter</a></li>
                     <li><a href="{{ route('pasiens.index') }}">List Pasien</a></li>
                     <li><a href="{{ route('obats.index') }}">List Obat</a></li>
-                    <li><a href="{{ route('polikliniks.index') }}">List Poliklinik</a></li>
-                    <li><a href="{{ route('rekammedis.index') }}">Rekam Medis</a></li>
-                    
+                    <li><a href="{{ route('polikliniks.index') }}">List Poliklinik</a></li>        
                 </ul>
 
                 <!-- Expandable Reports Menu -->
-                <li class="expandable-menu">Non-Booking</li>
+                <li class="expandable-menu">Antrian Offline</li>
                 <ul class="child-menu">
-                <li><a href="{{ route('non_bookantrian.index') }}">Pasien Non-Booking</a></li>
+                <li><a href="{{ route('non_bookantrian.index') }}">Pasien Antrian Offline</a></li>
+                <li><a href="{{ route('rekammedis.index') }}">Rekam Medis</a></li>
+                </ul>
+                <!-- Expandable Reports Menu -->
+                <li class="expandable-menu">Antrian Online</li>
+                <ul class="child-menu">
+                <li><a href="{{ route('bookantrian.index') }}">Pasien Antrian Online</a></li>
                 </ul>
             </ul>
         </nav>

@@ -14,7 +14,9 @@ use App\Http\Controllers\MedikaObatController;
 use App\Http\Controllers\MedikaPoliklinikController;
 use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\NonBookAntrianController;
+use App\Http\Controllers\BookAntrianController;
 use App\Http\Controllers\DashboardController;
+use App\Models\BookAntrian;
 
 
 /*
@@ -27,6 +29,11 @@ use App\Http\Controllers\DashboardController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/bookantrian/latest', function () {
+    $bookantrians = BookAntrian::latest()->get(); // Adjust to your specific requirements
+    return response()->json($bookantrians);
+});
 Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/admin', [MedikaAdminController::class, 'index'])->name('admin.index');
     Route::resource('admin/users', MedikaAdminController::class);
@@ -36,6 +43,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::resource('admin/polikliniks', MedikaPoliklinikController::class); 
     Route::resource('admin/rekammedis', RekamMedisController::class);
     Route::resource('admin/non_bookantrian', NonBookAntrianController::class); 
+    Route::resource('admin/bookantrian', BookAntrianController::class); 
 });
 //login example
 Route::get('/loginpuspita', [LoginController::class, 'showLoginForm'])->name('login.puspita');

@@ -41,7 +41,7 @@
 
         <div class="form-group mb-4">
             <label for="status" class="text-white">Status:</label>
-            <input type="text" name="status" id="status" class="form-input">
+            <input type="text" name="status" id="status" class="form-input" required>
             @error('status')
                 <div class="text-red-500">{{ $message }}</div>
             @enderror
