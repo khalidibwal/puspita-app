@@ -22,6 +22,8 @@ return new class extends Migration
              // Foreign key reference to user_app table (userId)
              $table->unsignedBigInteger('user_id');  // The ID of the logged-in user
              $table->foreign('user_id')->references('id')->on('user_app')->onDelete('cascade');
+             $table->unsignedInteger('poliklinikId');
+            $table->foreign('poliklinikId')->references('idPoliklinik')->on('poliklinik')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -12,15 +12,15 @@ class BookAntrianController extends Controller
      * Display a list of BookAntrian records for the logged-in user.
      */
     public function index()
-{
-    // Fetch all book antrian records for the logged-in user, ordered by `tanggal_kunjungan` in descending order
-    $bookantrians = BookAntrian::where('user_id', Auth::id())
-        ->orderBy('tanggal_kunjungan', 'desc')
-        ->paginate(5);
+    {
+        // Fetch all book antrian records for the logged-in user, ordered by `tanggal_kunjungan` in descending order
+        $bookantrians = BookAntrian::where('user_id', Auth::id())
+            ->orderBy('tanggal_kunjungan', 'desc')
+            ->paginate(5);
 
-    // Return the view with the book antrian records
-    return view('Admin.Bookantrian.index', compact('bookantrians'));
-}
+        // Return the view with the book antrian records
+        return view('Admin.Bookantrian.index', compact('bookantrians'));
+    }
 
     /**
      * Show the form for creating a new BookAntrian record.
@@ -40,6 +40,7 @@ class BookAntrianController extends Controller
         $request->validate([
             'keluhan' => 'required|string',
             'tanggal_kunjungan' => 'required|date',
+            'poliklinikId' => 'required|integer|exists:poliklinik,idPoliklinik', // Validate foreign key
         ]);
 
         // Get the last `no_antrian` value from the database for the specific date
@@ -62,6 +63,7 @@ class BookAntrianController extends Controller
             'tanggal_kunjungan' => $request->tanggal_kunjungan,
             'status' => 'PENDING',
             'user_id' => Auth::id(),
+            'poliklinikId' => $request->poliklinikId, // Include foreign key
         ]);
 
         // Redirect to the index page with success message
@@ -94,7 +96,7 @@ class BookAntrianController extends Controller
             ->firstOrFail();
 
         // Return the view for editing the book antrian
-        return view('bookantrian.edit', compact('bookantrian'));
+        return view('Admin.Bookantrian.edit', compact('bookantrian'));
     }
 
     /**
@@ -107,6 +109,7 @@ class BookAntrianController extends Controller
             'keluhan' => 'required|string',
             'tanggal_kunjungan' => 'required|date',
             'status' => 'nullable|string|max:50',
+            'poliklinikId' => 'required|integer|exists:poliklinik,idPoliklinik', // Validate foreign key
         ]);
 
         // Find the BookAntrian record
@@ -119,6 +122,7 @@ class BookAntrianController extends Controller
             'keluhan' => $request->keluhan,
             'tanggal_kunjungan' => $request->tanggal_kunjungan,
             'status' => $request->status ?? 'PENDING',
+            'poliklinikId' => $request->poliklinikId, // Include foreign key
         ]);
 
         // Redirect to the index page with success message

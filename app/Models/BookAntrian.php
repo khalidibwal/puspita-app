@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class BookAntrian extends Model
 {
     use HasFactory;
+
     // Specify the table name
     protected $table = 'bookantrian';
 
@@ -17,12 +18,19 @@ class BookAntrian extends Model
         'keluhan',
         'tanggal_kunjungan',
         'status',
-        'user_id', // Foreign key reference to user
+        'user_id',       // Foreign key reference to user
+        'poliklinikId',  // Foreign key reference to poliklinik
     ];
 
     // Relationship with the User model (assuming user is stored in user_app table)
     public function user()
     {
         return $this->belongsTo(ApiUser::class, 'user_id');
+    }
+
+    // Relationship with the Poliklinik model
+    public function poliklinik()
+    {
+        return $this->belongsTo(medikaPoliklinik::class, 'poliklinikId', 'idPoliklinik');
     }
 }

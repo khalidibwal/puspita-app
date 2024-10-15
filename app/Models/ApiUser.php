@@ -15,7 +15,7 @@ class ApiUser extends Authenticatable
     use HasFactory,HasApiTokens, Notifiable;
     protected $table = 'user_app';
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password','noBPJS','noTelp','alamat','nik'
     ];
 
     protected $hidden = [
