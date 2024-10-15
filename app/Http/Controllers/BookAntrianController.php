@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookAntrian;
+use App\Models\NonBookAntrian; // Import the NonBookAntrian model
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,23 +23,48 @@ class BookAntrianController extends Controller
     }
 
 
+    // public function showCurrentAntrian()
+    // {
+    // // Fetch the entry with status NOW
+    // $currentAntrian = BookAntrian::where('status', 'NOW')->first();
+
+    // // Return the Blade view with the currentAntrian
+    // return view('admin.Bookantrian.booking-antrian', compact('currentAntrian'));
+    // }
+    // public function fetchCurrentAntrian()
+    // {
+    // // Fetch the entry with status NOW
+    // $currentAntrian = BookAntrian::where('status', 'NOW')->first();
+
+    // // Return only the necessary data for the AJAX request
+    // return response()->json(['currentAntrian' => $currentAntrian]);
+    // }
     public function showCurrentAntrian()
-{
-    // Fetch the entry with status NOW
-    $currentAntrian = BookAntrian::where('status', 'NOW')->first();
+    {
+        // Fetch the entry with status NOW from BookAntrian
+        $currentAntrian = BookAntrian::where('status', 'NOW')->first();
 
-    // Return the Blade view with the currentAntrian
-    return view('admin.Bookantrian.booking-antrian', compact('currentAntrian'));
-}
-public function fetchCurrentAntrian()
-{
-    // Fetch the entry with status NOW
-    $currentAntrian = BookAntrian::where('status', 'NOW')->first();
+        // Fetch the entry with status NOW from NonBookAntrian
+        $currentOfflineAntrian = NonBookAntrian::where('status', 'NOW')->first();
 
-    // Return only the necessary data for the AJAX request
-    return response()->json(['currentAntrian' => $currentAntrian]);
-}
+        // Return the Blade view with both currentAntrian and currentOfflineAntrian
+        return view('admin.Bookantrian.booking-antrian', compact('currentAntrian', 'currentOfflineAntrian'));
+    }
 
+    public function fetchCurrentAntrian()
+    {
+        // Fetch the entry with status NOW from BookAntrian
+        $currentAntrian = BookAntrian::where('status', 'NOW')->first();
+        
+        // Fetch the entry with status NOW from NonBookAntrian
+        $currentOfflineAntrian = NonBookAntrian::where('status', 'NOW')->first();
+
+        // Return only the necessary data for the AJAX request
+        return response()->json([
+            'currentAntrian' => $currentAntrian,
+            'currentOfflineAntrian' => $currentOfflineAntrian
+        ]);
+    }
 
 
     /**
