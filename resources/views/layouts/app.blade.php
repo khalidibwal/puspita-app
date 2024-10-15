@@ -121,7 +121,7 @@
                 @if (auth()->user()->role === 2)  <!-- Check if the user's role is 2 -->
                     <li class="Menu-card"><a href="{{ route('admin.index') }}">Check Users</a></li>
                 @endif
-
+                <li class="Menu-card"><a href="{{ route('show.antrian') }}">LIVE ANTRIAN</a></li>
                 <!-- Expandable Non-Booking Menu -->
                 <li class="expandable-menu">Admin Menu</li>
                 <ul class="child-menu">

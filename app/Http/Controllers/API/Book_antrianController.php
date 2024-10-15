@@ -82,33 +82,45 @@ class Book_antrianController extends Controller
      * Update a specific BookAntrian record.
      */
     public function update(Request $request, $id)
-    {
-        // Find the BookAntrian record
+{
+    try {
+        // Find the BookAntrian record for the authenticated user
         $bookantrian = BookAntrian::where('id', $id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        // Validate the request
+        // Validate the status input
         $validatedData = $request->validate([
-            'keluhan' => 'required|string',
-            'tanggal_kunjungan' => 'required|date',
-            'poliklinikId' => 'required|integer|exists:poliklinik,id', // Ensure poliklinikId exists
-            'status' => 'nullable|string|max:50',
+            'status' => 'required|string|in:PENDING,NOW,COMPLETED,CANCELED', // Status must be one of these values
         ]);
 
-        // Update the record
-        $bookantrian->update([
-            'keluhan' => $validatedData['keluhan'],
-            'tanggal_kunjungan' => $validatedData['tanggal_kunjungan'],
-            'status' => $validatedData['status'] ?? 'PENDING',
-            'poliklinikId' => $validatedData['poliklinikId'], // Update poliklinikId
-        ]);
+        // Update only the status field
+        $bookantrian->status = $validatedData['status'];
+        $bookantrian->save();
 
         return response()->json([
-            'message' => 'BookAntrian record updated successfully',
+            'message' => 'BookAntrian status updated successfully',
             'data' => $bookantrian,
         ], 200);
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        // Handle case where the record is not found
+        return response()->json([
+            'message' => 'BookAntrian record not found',
+        ], 404);
+
+    } catch (\Exception $e) {
+        // Log the error for debugging
+        \Log::error('Error updating BookAntrian status: ' . $e->getMessage());
+
+        // Return a generic error response
+        return response()->json([
+            'message' => 'Failed to update BookAntrian status. Please try again later.',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
 
     /**
      * Delete a specific BookAntrian record.

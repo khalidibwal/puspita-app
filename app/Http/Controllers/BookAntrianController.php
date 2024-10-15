@@ -11,16 +11,35 @@ class BookAntrianController extends Controller
     /**
      * Display a list of BookAntrian records for the logged-in user.
      */
-    public function index()
+        public function index(Request $request)
     {
-        // Fetch all book antrian records for the logged-in user, ordered by `tanggal_kunjungan` in descending order
-        $bookantrians = BookAntrian::where('user_id', Auth::id())
-            ->orderBy('tanggal_kunjungan', 'desc')
-            ->paginate(5);
+        $search = $request->input('search');
+        $bookantrians = BookAntrian::when($search, function($query, $search) {
+            return $query->where('keluhan', 'LIKE', "%{$search}%");
+        })->paginate(10); // Adjust the pagination as necessary
 
-        // Return the view with the book antrian records
-        return view('Admin.Bookantrian.index', compact('bookantrians'));
+        return view('admin.Bookantrian.index', compact('bookantrians'));
     }
+
+
+    public function showCurrentAntrian()
+{
+    // Fetch the entry with status NOW
+    $currentAntrian = BookAntrian::where('status', 'NOW')->first();
+
+    // Return the Blade view with the currentAntrian
+    return view('admin.Bookantrian.booking-antrian', compact('currentAntrian'));
+}
+public function fetchCurrentAntrian()
+{
+    // Fetch the entry with status NOW
+    $currentAntrian = BookAntrian::where('status', 'NOW')->first();
+
+    // Return only the necessary data for the AJAX request
+    return response()->json(['currentAntrian' => $currentAntrian]);
+}
+
+
 
     /**
      * Show the form for creating a new BookAntrian record.
@@ -92,43 +111,62 @@ class BookAntrianController extends Controller
     {
         // Find the BookAntrian record
         $bookantrian = BookAntrian::where('id', $id)
-            ->where('user_id', Auth::id())
             ->firstOrFail();
 
         // Return the view for editing the book antrian
-        return view('Admin.Bookantrian.edit', compact('bookantrian'));
+        return view('admin.Bookantrian.edit', compact('bookantrian'));
     }
 
     /**
      * Update a specific BookAntrian record.
      */
     public function update(Request $request, $id)
-    {
-        // Validate the request
-        $request->validate([
-            'keluhan' => 'required|string',
-            'tanggal_kunjungan' => 'required|date',
-            'status' => 'nullable|string|max:50',
-            'poliklinikId' => 'required|integer|exists:poliklinik,idPoliklinik', // Validate foreign key
+{
+    try {
+        // Validate the status input
+        $validatedData = $request->validate([
+            'status' => 'required|string|in:PENDING,COMPLETED,CANCELLED,NOW', // Status must be one of these values
         ]);
+
+        // Check if the status is 'NOW'
+        if ($validatedData['status'] === 'NOW') {
+            // Check if any BookAntrian record already has the status 'NOW'
+            $hasNowStatus = BookAntrian::where('status', 'NOW')->exists();
+
+            if ($hasNowStatus) {
+                // If there's already a record with status 'NOW', prevent the update
+                return redirect()->back()->withErrors(['status' => 'Tidak Dapat di ganti status SEKARANG/NOW karna ada ANTRIAN YANG BELUM DI UPDATE']);
+            }
+        }
 
         // Find the BookAntrian record
-        $bookantrian = BookAntrian::where('id', $id)
-            ->where('user_id', Auth::id())
-            ->firstOrFail();
+        $bookantrian = BookAntrian::findOrFail($id);
 
-        // Update the record
-        $bookantrian->update([
-            'keluhan' => $request->keluhan,
-            'tanggal_kunjungan' => $request->tanggal_kunjungan,
-            'status' => $request->status ?? 'PENDING',
-            'poliklinikId' => $request->poliklinikId, // Include foreign key
-        ]);
+        // Allow updates to COMPLETED, PENDING, or CANCELLED without restriction
+        if (in_array($validatedData['status'], ['COMPLETED', 'PENDING', 'CANCELLED'])) {
+            $bookantrian->status = $validatedData['status'];
+        } elseif ($validatedData['status'] === 'NOW' && !$hasNowStatus) {
+            // If status is NOW and no other record has 'NOW', allow the update
+            $bookantrian->status = 'NOW';
+        }
 
-        // Redirect to the index page with success message
-        return redirect()->route('bookantrian.index')
-            ->with('success', 'BookAntrian updated successfully.');
+        // Save the updated status
+        $bookantrian->save();
+
+        return redirect()->route('bookantrian.index')->with('success', 'Book Antrian status updated successfully!');
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        // Handle case where the record is not found
+        return redirect()->back()->withErrors(['status' => 'Book Antrian record not found.']);
+    } catch (\Exception $e) {
+        // Log the error for debugging
+        \Log::error('Error updating Book Antrian status: ' . $e->getMessage());
+
+        // Return a generic error response
+        return redirect()->back()->withErrors(['status' => 'Failed to update Book Antrian status. Please try again later.']);
     }
+}
+
+
 
     /**
      * Delete a specific BookAntrian record.
@@ -137,7 +175,6 @@ class BookAntrianController extends Controller
     {
         // Find the BookAntrian record
         $bookantrian = BookAntrian::where('id', $id)
-            ->where('user_id', Auth::id())
             ->firstOrFail();
 
         // Delete the record

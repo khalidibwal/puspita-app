@@ -41,7 +41,13 @@
 
         <div class="form-group mb-4">
             <label for="status" class="text-white">Status:</label>
-            <input type="text" name="status" id="status" class="form-input" required>
+            <select name="status" id="status" required class="form-input">
+                <option value="">-- Pilih Status --</option>
+                <option value="PENDING">PENDING</option>
+                <option value="COMPLETED">COMPLETED</option>
+                <option value="CANCELLED">CANCELLED</option>
+                <option value="NOW">NOW</option>
+            </select>
             @error('status')
                 <div class="text-red-500">{{ $message }}</div>
             @enderror

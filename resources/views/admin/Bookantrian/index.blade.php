@@ -21,6 +21,7 @@
                     <th>Keluhan</th>
                     <th>Tanggal Kunjungan</th>
                     <th>Status</th>
+                    <th>Actions</th> <!-- Add Actions column -->
                 </tr>
             </thead>
             <tbody>
@@ -30,11 +31,23 @@
                         <td>{{ $bookantrian->keluhan }}</td>
                         <td>{{ $bookantrian->tanggal_kunjungan }}</td>
                         <td>{{ $bookantrian->status }}</td>
+                        <td>
+                            <!-- Edit Button -->
+                            <a href="{{ route('bookantrian.edit', $bookantrian->id) }}" class="edit-btn">Edit</a>
+
+                            <!-- Delete Button (form to delete record) -->
+                            <form action="{{ route('bookantrian.destroy', $bookantrian->id) }}" method="POST" style="display:inline-block;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" class="delete-btn" onclick="confirmDelete(this)">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
+    
 
     <!-- Include SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -93,6 +106,14 @@
                         <td>${bookantrian.keluhan}</td>
                         <td>${bookantrian.tanggal_kunjungan}</td>
                         <td>${bookantrian.status}</td>
+                        <td>
+                            <a href="/admin/bookantrian/${bookantrian.id}/edit" class="edit-btn">Edit</a>
+                            <form action="/admin/bookantrian/${bookantrian.id}" method="POST" style="display:inline-block;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" class="delete-btn" onclick="confirmDelete(this)">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                 `;
                 tableBody.append(row);

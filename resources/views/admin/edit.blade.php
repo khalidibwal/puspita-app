@@ -46,7 +46,7 @@
                     <label for="role" class="block text-sm font-medium text-gray-700">Role:</label>
                     <select name="role" id="role" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:border-indigo-300 p-2">
                         <option value="1" {{ $user->role == 1 ? 'selected' : '' }}>Admin</option>
-                        <option value="2" {{ $user->role == 2 ? 'selected' : '' }}>User</option>
+                        <option value="2" {{ $user->role == 2 ? 'selected' : '' }}>Super Admin</option>
                     </select>
                     @error('role')
                         <span class="text-red-500 text-sm">{{ $message }}</span>

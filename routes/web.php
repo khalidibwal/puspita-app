@@ -30,6 +30,10 @@ use App\Models\BookAntrian;
 |
 */
 
+Route::get('/booking-antrian', [BookAntrianController::class, 'showCurrentAntrian'])->name('show.antrian');
+// Route for auto-updating with JSON data
+Route::get('/fetch-antrian', [BookAntrianController::class, 'fetchCurrentAntrian'])->name('fetch.antrian');
+
 Route::get('/bookantrian/latest', function () {
     $bookantrians = BookAntrian::latest()->get(); // Adjust to your specific requirements
     return response()->json($bookantrians);
