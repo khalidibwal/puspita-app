@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookAntrian;
+use App\Models\ApiUser;
+use App\Models\medikaPoliklinik;
 use App\Models\NonBookAntrian; // Import the NonBookAntrian model
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,15 +14,20 @@ class BookAntrianController extends Controller
     /**
      * Display a list of BookAntrian records for the logged-in user.
      */
-        public function index(Request $request)
+    public function index(Request $request)
     {
         $search = $request->input('search');
-        $bookantrians = BookAntrian::when($search, function($query, $search) {
-            return $query->where('keluhan', 'LIKE', "%{$search}%");
-        })->paginate(10); // Adjust the pagination as necessary
-
-        return view('admin.Bookantrian.index', compact('bookantrians'));
+        $bookantrians = BookAntrian::with(['poliklinik', 'user']) // Load relationships
+            ->when($search, function($query, $search) {
+                return $query->where('status', 'LIKE', "%{$search}%");
+            })->paginate(10); // Adjust the pagination as necessary
+    
+        $poliklinik = medikaPoliklinik::all();
+        $userApi = ApiUser::all();
+    
+        return view('admin.Bookantrian.index', compact('bookantrians', 'poliklinik', 'userApi'));
     }
+    
 
 
     // public function showCurrentAntrian()
@@ -65,6 +72,17 @@ class BookAntrianController extends Controller
             'currentOfflineAntrian' => $currentOfflineAntrian
         ]);
     }
+     // New function to return JSON data
+     public function getCurrentAntrianJson()
+     {
+         $currentAntrian = BookAntrian::where('status', 'NOW')->first();
+         $currentOfflineAntrian = NonBookAntrian::where('status', 'NOW')->first();
+ 
+         return response()->json([
+             'currentAntrian' => $currentAntrian,
+             'currentOfflineAntrian' => $currentOfflineAntrian
+         ]);
+     }
 
 
     /**

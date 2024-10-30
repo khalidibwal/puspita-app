@@ -44,18 +44,22 @@ class MedikaObatController extends Controller
     public function store(Request $request)
     {
         // Validate the request
-        $request->validate([
+        $validatedData = $request->validate([
             'namaObat' => 'required|string|max:255',
-            'harga' => 'required|numeric',
+            'harga' => 'nullable|numeric',  // Make 'harga' nullable
             'stok' => 'required|integer',
             'keterangan' => 'nullable|string',
         ]);
-
-        // Create a new medika obat record
-        medikaObat::create($request->all());
-
+    
+        // If 'harga' is not provided in the request, default to 0
+        $validatedData['harga'] = $request->input('harga', 0);
+    
+        // Create a new medika obat record using validated data
+        medikaObat::create($validatedData);
+    
         return redirect()->route('obats.index')->with('success', 'Medika Obat created successfully.');
     }
+    
 
     /**
      * Display the specified resource.
@@ -89,21 +93,25 @@ class MedikaObatController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        // Validate the request
-        $request->validate([
-            'namaObat' => 'required|string|max:255',
-            'harga' => 'required|numeric',
-            'stok' => 'required|integer',
-            'keterangan' => 'nullable|string',
-        ]);
+{
+    // Validate the request
+    $validatedData = $request->validate([
+        'namaObat' => 'required|string|max:255',
+        'harga' => 'nullable|numeric',  // Make 'harga' nullable
+        'stok' => 'required|integer',
+        'keterangan' => 'nullable|string',
+    ]);
 
-        // Find the medika obat record and update it
-        $medikaObat = medikaObat::findOrFail($id);
-        $medikaObat->update($request->all());
+    // If 'harga' is not provided in the request, default to 0
+    $validatedData['harga'] = $request->input('harga', 0);
 
-        return redirect()->route('obats.index')->with('success', 'Medika Obat updated successfully.');
-    }
+    // Find the medika obat record and update it
+    $medikaObat = medikaObat::findOrFail($id);
+    $medikaObat->update($validatedData);
+
+    return redirect()->route('obats.index')->with('success', 'Medika Obat updated successfully.');
+}
+
 
     /**
      * Remove the specified resource from storage.

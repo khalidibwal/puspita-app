@@ -13,14 +13,23 @@ class MedikaPasienController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        // Get all pasien records from the database
-        $pasiens = medikaPasien::all();
-        
-        // Return the view with pasien data
-        return view('admin.Pasien.index', compact('pasiens'));
-    }
+    public function index(Request $request)
+{
+    // Get search query from the request
+    $search = $request->input('search');
+
+    // Fetch paginated records, filtering by search query if provided
+    $pasiens = medikaPasien::when($search, function ($query, $search) {
+        // Search by 'namaPasien', 'NIK', or 'email'
+        return $query->where('namaPasien', 'like', '%' . $search . '%')
+                     ->orWhere('NIK', 'like', '%' . $search . '%')
+                     ->orWhere('email', 'like', '%' . $search . '%');
+    })->paginate(10); // You can change the number 10 to the desired number of records per page.
+
+    // Pass the search term to the view to maintain the search query on pagination
+    return view('admin.Pasien.index', compact('pasiens', 'search'));
+}
+
 
     /**
      * Show the form for creating a new resource.

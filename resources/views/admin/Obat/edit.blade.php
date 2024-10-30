@@ -19,13 +19,13 @@
             @enderror
         </div>
 
-        <div class="form-group mb-4">
+        <!-- <div class="form-group mb-4">
             <label for="harga" class="text-white">Harga:</label>
             <input type="number" name="harga" id="harga" value="{{ old('harga', $medikaObat->harga) }}" required class="form-input">
             @error('harga')
                 <div class="text-red-500">{{ $message }}</div>
             @enderror
-        </div>
+        </div> -->
 
         <div class="form-group mb-4">
             <label for="stok" class="text-white">Stok:</label>

@@ -74,7 +74,7 @@
                     @enderror
                 </div>
 
-                <div class="mb-4">
+                <!-- <div class="mb-4">
                     <label for="biayaDokter" class="block text-sm font-medium text-gray-700">Biaya Dokter:</label>
                     <input type="number" name="biayaDokter" id="biayaDokter" 
                            required 
@@ -82,7 +82,7 @@
                     @error('biayaDokter')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
-                </div>
+                </div> -->
 
                 <button type="submit" class="w-full bg-blue-600 font-semibold py-2 px-4 rounded hover:bg-blue-500 transition">Add Dokter</button>
             </form>

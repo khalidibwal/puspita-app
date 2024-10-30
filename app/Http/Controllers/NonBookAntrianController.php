@@ -14,14 +14,15 @@ class NonBookAntrianController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        // Get all non-bookantrian records from the database
-        $nonBookAntrians = NonBookAntrian::all();
-        $pasiens = medikaPasien::all();
+{
+    // Paginate non-bookantrian records, 10 records per page (adjust as needed)
+    $nonBookAntrians = NonBookAntrian::paginate(10);
+    $pasiens = medikaPasien::all(); // Assuming you don't need pagination for pasiens
 
-        // Return the view with non-bookantrian data
-        return view('admin.NonBookAntrian.index', compact('nonBookAntrians','pasiens'));
-    }
+    // Return the view with paginated non-bookantrian data
+    return view('admin.NonBookAntrian.index', compact('nonBookAntrians', 'pasiens'));
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -126,24 +127,51 @@ class NonBookAntrianController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        // Find the non-bookantrian record by id
-        $nonBookAntrian = NonBookAntrian::findOrFail($id);
-
-        // Validate the request data
+{
+    try {
+        // Validate the status input
         $validatedData = $request->validate([
-            'no_antrian' => 'required|string|max:20',
-            'keluhan' => 'required|string',
-            'tanggal_kunjungan' => 'required|date',
-            'status' => 'nullable|string|max:50',
+            'status' => 'required|string|in:PENDING,COMPLETED,CANCELLED,NOW', // Status must be one of these values
         ]);
 
-        // Update the non-bookantrian record
-        $nonBookAntrian->update($validatedData);
+        // Check if the status is 'NOW'
+        if ($validatedData['status'] === 'NOW') {
+            // Check if any NonBookAntrian record already has the status 'NOW'
+            $hasNowStatus = NonBookAntrian::where('status', 'NOW')->exists();
 
-        // Redirect to the index page with success message
-        return redirect()->route('non_bookantrian.index')->with('success', 'Non-BookAntrian record updated successfully.');
+            if ($hasNowStatus) {
+                // If there's already a record with status 'NOW', prevent the update
+                return redirect()->back()->withErrors(['status' => 'Tidak Dapat di ganti status SEKARANG/NOW karna ada ANTRIAN YANG BELUM DI UPDATE']);
+            }
+        }
+
+        // Find the NonBookAntrian record
+        $nonBookAntrian = NonBookAntrian::findOrFail($id);
+
+        // Allow updates to COMPLETED, PENDING, or CANCELLED without restriction
+        if (in_array($validatedData['status'], ['COMPLETED', 'PENDING', 'CANCELLED'])) {
+            $nonBookAntrian->status = $validatedData['status'];
+        } elseif ($validatedData['status'] === 'NOW' && !$hasNowStatus) {
+            // If status is NOW and no other record has 'NOW', allow the update
+            $nonBookAntrian->status = 'NOW';
+        }
+
+        // Save the updated status
+        $nonBookAntrian->save();
+
+        return redirect()->route('non_bookantrian.index')->with('success', 'Non-BookAntrian status updated successfully!');
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        // Handle case where the record is not found
+        return redirect()->back()->withErrors(['status' => 'Non-BookAntrian record not found.']);
+    } catch (\Exception $e) {
+        // Log the error for debugging
+        \Log::error('Error updating Non-BookAntrian status: ' . $e->getMessage());
+
+        // Return a generic error response
+        return redirect()->back()->withErrors(['status' => 'Failed to update Non-BookAntrian status. Please try again later.']);
     }
+}
+
 
     /**
      * Remove the specified resource from storage.

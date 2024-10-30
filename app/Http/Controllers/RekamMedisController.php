@@ -5,17 +5,36 @@ namespace App\Http\Controllers;
 use App\Models\RekamMedis;
 use App\Models\medikaPasien;
 use App\Models\medikaDokter;
-use App\Models\medikapoliklinik;
+use App\Models\medikaPoliklinik;
 use Illuminate\Http\Request; 
 
 class RekamMedisController extends Controller
 {
     // Display a listing of the resource
-    public function index()
+    public function index(Request $request)
     {
-        $rekamMedis = RekamMedis::with(['pasien', 'dokter', 'poliklinik', 'userlogin'])->get();
-        return view('admin.Rekammedis.index', compact('rekamMedis'));
+    // Get the search query from the request (if provided)
+    $search = $request->input('search');
+
+    // Query RekamMedis with relationships and search functionality
+    $rekamMedis = RekamMedis::with(['pasien', 'dokter', 'poliklinik', 'userlogin'])
+        ->when($search, function ($query, $search) {
+            return $query->whereHas('pasien', function ($q) use ($search) {
+                $q->where('namaPasien', 'like', '%' . $search . '%');
+            })
+            ->orWhereHas('dokter', function ($q) use ($search) {
+                $q->where('namaDokter', 'like', '%' . $search . '%');
+            })
+            ->orWhere('keluhan', 'like', '%' . $search . '%')
+            ->orWhere('diagnosa', 'like', '%' . $search . '%')
+            ->orWhere('terapi', 'like', '%' . $search . '%');
+        })
+        ->paginate(10); // Paginate results, 10 per page (adjust as needed)
+
+    // Return the view with the paginated RekamMedis data and search term
+    return view('admin.Rekammedis.index', compact('rekamMedis', 'search'));
     }
+
 
     // Show the form for creating a new resource
     public function create()

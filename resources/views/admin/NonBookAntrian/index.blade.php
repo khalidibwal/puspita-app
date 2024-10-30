@@ -51,6 +51,11 @@
         </tbody>
     </table>
 
+        <!-- Pagination Links -->
+        <div class="pagination">
+        {{ $nonBookAntrians->links() }} <!-- This will generate the pagination links -->
+    </div>
+
     <!-- Include SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -119,6 +124,10 @@
         }
         h1 {
             color: white;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
         }
     </style>
 </x-app-layout>

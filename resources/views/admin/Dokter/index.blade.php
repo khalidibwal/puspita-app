@@ -26,8 +26,8 @@
                 <th>Email</th>
                 <th>No Telp</th>
                 <th>Alamat</th>
-                <th>Biaya Dokter</th>
-                <th>Biaya Dokter (50%)</th>
+                <!-- <th>Biaya Dokter</th>
+                <th>Biaya Dokter (50%)</th> -->
                 <th>Actions</th>
             </tr>
         </thead>
@@ -40,8 +40,8 @@
                     <td>{{ $dokter->email }}</td>
                     <td>{{ $dokter->noTelp }}</td>
                     <td>{{ $dokter->alamat }}</td>
-                    <td>IDR {{ number_format($dokter->biayaDokter, 0, ',', '.') }}</td>
-                    <td>IDR {{ number_format($dokter->biayaDokter * 0.5, 0, ',', '.') }}</td>
+                    <!-- <td>IDR {{ number_format($dokter->biayaDokter, 0, ',', '.') }}</td>
+                    <td>IDR {{ number_format($dokter->biayaDokter * 0.5, 0, ',', '.') }}</td> -->
                     <td>
                         <a href="{{ route('dokters.edit', $dokter->nip) }}" class="edit-btn">Edit</a>
                         <form action="{{ route('dokters.destroy', $dokter->nip) }}" method="POST" style="display:inline;" class="delete-form">

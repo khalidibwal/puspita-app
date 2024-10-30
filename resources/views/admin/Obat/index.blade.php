@@ -21,7 +21,7 @@
         <thead>
             <tr>
                 <th>Nama Obat</th>
-                <th>Harga</th>
+                <!-- <th>Harga</th> -->
                 <th>Stok</th>
                 <th>Keterangan</th>
                 <th>Actions</th>
@@ -31,7 +31,7 @@
             @foreach ($medikaObats as $obat)
                 <tr>
                     <td>{{ $obat->namaObat }}</td>
-                    <td>IDR {{ number_format($obat->harga, 0, ',', '.') }}</td>
+                    <!-- <td>IDR {{ number_format($obat->harga, 0, ',', '.') }}</td> -->
                     <td>{{ $obat->stok }}</td>
                     <td>{{ $obat->keterangan }}</td>
                     <td>

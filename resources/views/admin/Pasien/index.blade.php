@@ -11,6 +11,11 @@
         </div>
     @endif
 
+    <form action="{{ route('pasiens.index') }}" method="GET" class="mb-4" style="margin-top: 20px;">
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search Pasien..." class="form-input" />
+        <button type="submit" class="submit-btn">Search</button>
+    </form>
+
     <table class="user-table">
         <thead>
             <tr>
@@ -56,6 +61,11 @@
             @endforeach
         </tbody>
     </table>
+
+    <!-- Pagination Links -->
+    <div class="pagination">
+        {{ $pasiens->links() }} <!-- This will generate the pagination links -->
+    </div>
 
     <!-- Include SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -125,6 +135,27 @@
         }
         h1 {
             color: white;
+        }
+        .form-input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .submit-btn {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
         }
     </style>
 </x-app-layout>

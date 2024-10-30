@@ -25,4 +25,8 @@ class ApiUser extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function bookAntrians()
+    {
+        return $this->hasMany(BookAntrian::class, 'user_id'); // Define the inverse relationship
+    }
 }

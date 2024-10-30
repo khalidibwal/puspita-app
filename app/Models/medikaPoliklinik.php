@@ -17,4 +17,8 @@ class medikaPoliklinik extends Model
         'namaPoliklinik',
         'gedung'
     ];
+    public function bookAntrians()
+    {
+        return $this->hasMany(BookAntrian::class, 'poliklinikId', 'idPoliklinik'); // Define the inverse relationship
+    }
 }

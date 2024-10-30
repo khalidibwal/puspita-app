@@ -7,9 +7,10 @@
         </div>
     @endif
 
-    <!-- Search Form (if you want to add search functionality) -->
-    <form action="{{ route('bookantrian.index') }}" method="GET" class="mb-4" style="margin-top: 20px;">
-        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search Antrian..." class="form-input" />
+    <!-- Search Form -->
+    <form action="{{ route('bookantrian.index') }}" method="GET" class="mb-4 search-form">
+        <!-- <label for="search" class="text-white">Search Status:</label> -->
+        <input type="text" id="search" name="search" value="{{ request('search') }}" placeholder="Search Status..." class="form-input" />
         <button type="submit" class="submit-btn">Search</button>
     </form>
 
@@ -21,7 +22,9 @@
                     <th>Keluhan</th>
                     <th>Tanggal Kunjungan</th>
                     <th>Status</th>
-                    <th>Actions</th> <!-- Add Actions column -->
+                    <th>Poliklinik</th>
+                    <th>Pasien Booking</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,11 +34,10 @@
                         <td>{{ $bookantrian->keluhan }}</td>
                         <td>{{ $bookantrian->tanggal_kunjungan }}</td>
                         <td>{{ $bookantrian->status }}</td>
+                        <td>{{ $bookantrian->poliklinik->namaPoliklinik ?? 'N/A' }}</td>
+                        <td>{{ $bookantrian->user->name ?? 'N/A' }}</td>
                         <td>
-                            <!-- Edit Button -->
                             <a href="{{ route('bookantrian.edit', $bookantrian->id) }}" class="edit-btn">Edit</a>
-
-                            <!-- Delete Button (form to delete record) -->
                             <form action="{{ route('bookantrian.destroy', $bookantrian->id) }}" method="POST" style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
@@ -47,20 +49,19 @@
             </tbody>
         </table>
     </div>
-    
+
 
     <!-- Include SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        // Show the popup when the page loads
         $(document).ready(function() {
             Swal.fire({
                 title: 'Tunggu 5 detik',
                 text: 'Data antrian untuk Refresh',
                 icon: 'info',
-                timer: 5000,  // 5 seconds timer
+                timer: 5000,
                 showConfirmButton: false
             });
         });
@@ -81,23 +82,30 @@
             });
         }
 
-        // Auto-reload data every 5 seconds
         setInterval(fetchLatestData, 5000);
 
-        function fetchLatestData() {
-            $.ajax({
-                url: '/bookantrian/latest', // The route you created to get the latest data
-                method: 'GET',
-                success: function(data) {
-                    updateTable(data);
-                }
-            });
-        }
+        let currentData = [];
 
-        // Function to update the table with the new data
+function fetchLatestData() {
+    $.ajax({
+        url: '/bookantrian/latest',
+        method: 'GET',
+        success: function(data) {
+            console.log(data); // Check the new data
+
+            // Check if there are changes
+            if (JSON.stringify(data) !== JSON.stringify(currentData)) {
+                currentData = data; // Update current data
+                updateTable(data);   // Update the table
+            }
+        }
+    });
+}
+
+
         function updateTable(bookantrians) {
             let tableBody = $('#bookantrian-table tbody');
-            tableBody.empty(); // Clear the existing table body
+            tableBody.empty();
 
             bookantrians.forEach(function(bookantrian) {
                 let row = `
@@ -106,6 +114,8 @@
                         <td>${bookantrian.keluhan}</td>
                         <td>${bookantrian.tanggal_kunjungan}</td>
                         <td>${bookantrian.status}</td>
+                        <td>${bookantrian.poliklinik ? bookantrian.poliklinik.namaPoliklinik : 'N/A'}</td>
+                        <td>${bookantrian.user ? bookantrian.user.name : 'N/A'}</td>
                         <td>
                             <a href="/admin/bookantrian/${bookantrian.id}/edit" class="edit-btn">Edit</a>
                             <form action="/admin/bookantrian/${bookantrian.id}" method="POST" style="display:inline-block;">
@@ -147,13 +157,10 @@
         .user-table tr:hover {
             background-color: #f1f1f1;
         }
-
-        /* Scrollable table container */
         .table-container {
-            max-height: 400px; /* Set a fixed height */
-            overflow-y: auto; /* Enable vertical scroll */
+            max-height: 400px; 
+            overflow-y: auto; 
         }
-
         .edit-btn, .delete-btn {
             padding: 5px 10px;
             border: none;
@@ -163,11 +170,11 @@
             color: white;
         }
         .edit-btn {
-            background-color: #4CAF50; /* Green */
+            background-color: #4CAF50; 
             margin-right: 5px;
         }
         .delete-btn {
-            background-color: #f44336; /* Red */
+            background-color: #f44336; 
         }
         .delete-btn:hover, .edit-btn:hover {
             opacity: 0.8;
@@ -182,7 +189,7 @@
             margin-right: 10px;
         }
         .submit-btn {
-            background-color: #4CAF50; /* Green */
+            background-color: #4CAF50; 
             color: white;
             padding: 10px 20px;
             border: none;

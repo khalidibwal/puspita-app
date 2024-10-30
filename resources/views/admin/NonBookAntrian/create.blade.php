@@ -44,9 +44,7 @@
             <select name="status" id="status" required class="form-input">
                 <option value="">-- Pilih Status --</option>
                 <option value="PENDING">PENDING</option>
-                <option value="COMPLETED">COMPLETED</option>
                 <option value="CANCELLED">CANCELLED</option>
-                <option value="NOW">NOW</option>
             </select>
             @error('status')
                 <div class="text-red-500">{{ $message }}</div>

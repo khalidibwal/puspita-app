@@ -35,8 +35,15 @@ Route::get('/booking-antrian', [BookAntrianController::class, 'showCurrentAntria
 Route::get('/fetch-antrian', [BookAntrianController::class, 'fetchCurrentAntrian'])->name('fetch.antrian');
 
 Route::get('/bookantrian/latest', function () {
-    $bookantrians = BookAntrian::latest()->get(); // Adjust to your specific requirements
-    return response()->json($bookantrians);
+    // $bookantrians = BookAntrian::latest()->get(); // Adjust to your specific requirements
+    // return response()->json($bookantrians);
+     // Eager load user and poliklinik relationships
+      // Fetch the latest bookantrians in descending order
+    $bookantrians = BookAntrian::with(['user', 'poliklinik'])
+    ->orderBy('created_at', 'desc') // Adjust the column name as necessary
+    ->get();
+
+return response()->json($bookantrians);
 });
 Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/admin', [MedikaAdminController::class, 'index'])->name('admin.index');

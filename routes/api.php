@@ -2,14 +2,16 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\PasienController;
-use App\Http\Controllers\Api\DokterController;
-use App\Http\Controllers\Api\ObatController;
-use App\Http\Controllers\Api\PoliklinikController;
-use App\Http\Controllers\Api\RM_Controller;
-use App\Http\Controllers\Api\Book_pasienController;
-use App\Http\Controllers\Api\Book_antrianController;
+use App\Http\Controllers\API\PasienController;
+use App\Http\Controllers\API\DokterController;
+use App\Http\Controllers\API\ObatController;
+use App\Http\Controllers\API\PoliklinikController;
+use App\Http\Controllers\API\RM_Controller;
+use App\Http\Controllers\API\Book_pasienController;
+use App\Http\Controllers\API\Book_antrianController;
+use App\Http\Controllers\BookAntrianController;
 use App\Http\Controllers\API\AuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +27,7 @@ use App\Http\Controllers\API\AuthController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 
 // Pasien API routes
 Route::get('/pasiens', [PasienController::class, 'index']);
@@ -54,6 +57,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/bookantrian/{id}', [Book_antrianController::class, 'update']);
     Route::delete('/bookantrian/{id}', [Book_antrianController::class, 'destroy']);
 });
+
+//LIVE ANTRIAN
+Route::get('/fetch-antrian-api', [BookAntrianController::class, 'getCurrentAntrianJson'])->name('fetch.antrian.api');
 
 //API for DOKTER
 Route::prefix('dokters')->group(function () {

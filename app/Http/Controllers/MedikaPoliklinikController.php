@@ -12,11 +12,21 @@ class MedikaPoliklinikController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $polikliniks = medikaPoliklinik::all(); // Fetch all records
-        return view('admin.Poliklinik.index', compact('polikliniks')); // Return the view with records
-    }
+    public function index(Request $request)
+{
+    // Get the search query from the request
+    $search = $request->input('search');
+
+    // Fetch paginated records, applying search filter if provided
+    $polikliniks = medikaPoliklinik::when($search, function ($query, $search) {
+        // Search by 'namaPoliklinik' (or any other relevant fields)
+        return $query->where('namaPoliklinik', 'like', '%' . $search . '%');
+    })->paginate(10); // Adjust the number of records per page as needed
+
+    // Pass the search term to the view to retain it during pagination
+    return view('admin.Poliklinik.index', compact('polikliniks', 'search'));
+}
+
 
     /**
      * Show the form for creating a new resource.

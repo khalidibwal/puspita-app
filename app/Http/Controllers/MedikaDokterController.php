@@ -55,7 +55,7 @@ class MedikaDokterController extends Controller
             'noTelp' => 'required|string|max:15',
             'alamat' => 'required|string',
             'fotoDokter' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validate image
-            'biayaDokter' => 'required|integer',
+            // 'biayaDokter' => 'required|integer',
         ]);
 
         // Handle file upload if there's an image
@@ -75,7 +75,7 @@ class MedikaDokterController extends Controller
             'noTelp' => $request->noTelp,
             'alamat' => $request->alamat,
             'fotoDokter' => $fileName,
-            'biayaDokter' => $request->biayaDokter,
+            'biayaDokter' => 0,
         ]);
 
         return redirect()->route('dokters.index')->with('success', 'Doctor created successfully.');
@@ -123,7 +123,7 @@ class MedikaDokterController extends Controller
             'noTelp' => 'required|string|max:15',
             'alamat' => 'required|string',
             'fotoDokter' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validate image
-            'biayaDokter' => 'required|integer',
+            // 'biayaDokter' => 'required|integer',
         ]);
 
         // Find the doctor
@@ -143,7 +143,7 @@ class MedikaDokterController extends Controller
         $dokter->email = $request->email;
         $dokter->noTelp = $request->noTelp;
         $dokter->alamat = $request->alamat;
-        $dokter->biayaDokter = $request->biayaDokter;
+        // $dokter->biayaDokter = $request->biayaDokter;
         $dokter->save();
 
         return redirect()->route('dokters.index')->with('success', 'Doctor updated successfully.');
