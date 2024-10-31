@@ -24,7 +24,7 @@
 
         <div class="form-group">
             <label for="pasienId" class="text-white">Pasien</label>
-            <select name="pasienId" id="pasienId" class="input-field">
+            <select name="userId" id="pasienId" class="input-field">
                 <option value="">Pilih Pasien</option>
                 @foreach($pasien as $p)
                     <option value="{{ $p->id }}">{{ $p->name }}</option>

@@ -49,7 +49,7 @@ class BookRM_Controller extends Controller
         $validatedData = $request->validate([
             'idRekamMedis' => 'required|string|size:15|unique:book_rm,idRekamMedis',
             'dokterNip' => 'required|exists:dokter,nip',
-            'pasienId' => 'required|exists:user_app,id', // Validate pasienId
+            'userId' => 'required|exists:user_app,id', // Validate pasienId
             'poliklinikId' => 'required|exists:poliklinik,idPoliklinik',
             'keluhan' => 'required|string',
             'diagnosa' => 'required|string',
@@ -57,7 +57,7 @@ class BookRM_Controller extends Controller
             'tglPeriksa' => 'required|date',
         ]);
 
-        Book_RM::create(array_merge($validatedData, ['userId' => auth()->id()]));
+        Book_RM::create($validatedData);
 
         return redirect()->route('book_rm.index')->with('success', 'Rekam medis berhasil ditambahkan.');
     }
