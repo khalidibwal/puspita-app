@@ -141,6 +141,7 @@
                 <li class="expandable-menu">Antrian Online</li>
                 <ul class="child-menu">
                 <li><a href="{{ route('bookantrian.index') }}">Pasien Antrian Online</a></li>
+                <li><a href="{{ route('book_rm.index') }}">Rekam medis Online</a></li>
                 </ul>
             </ul>
         </nav>

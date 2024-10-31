@@ -16,6 +16,7 @@ use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\NonBookAntrianController;
 use App\Http\Controllers\BookAntrianController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BookRM_Controller;
 use App\Models\BookAntrian;
 
 
@@ -55,6 +56,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::resource('admin/rekammedis', RekamMedisController::class);
     Route::resource('admin/non_bookantrian', NonBookAntrianController::class); 
     Route::resource('admin/bookantrian', BookAntrianController::class); 
+    Route::resource('admin/book_rm', BookRM_Controller::class); 
 });
 //login example
 Route::get('/loginpuspita', [LoginController::class, 'showLoginForm'])->name('login.puspita');
