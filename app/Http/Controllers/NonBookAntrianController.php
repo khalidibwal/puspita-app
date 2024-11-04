@@ -126,7 +126,53 @@ class NonBookAntrianController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+//     public function update(Request $request, $id)
+// {
+//     try {
+//         // Validate the status input
+//         $validatedData = $request->validate([
+//             'status' => 'required|string|in:PENDING,COMPLETED,CANCELLED,NOW', // Status must be one of these values
+//         ]);
+
+//         // Check if the status is 'NOW'
+//         if ($validatedData['status'] === 'NOW') {
+//             // Check if any NonBookAntrian record already has the status 'NOW'
+//             $hasNowStatus = NonBookAntrian::where('status', 'NOW')->exists();
+
+//             if ($hasNowStatus) {
+//                 // If there's already a record with status 'NOW', prevent the update
+//                 return redirect()->back()->withErrors(['status' => 'Tidak Dapat di ganti status SEKARANG/NOW karna ada ANTRIAN YANG BELUM DI UPDATE']);
+//             }
+//         }
+
+//         // Find the NonBookAntrian record
+//         $nonBookAntrian = NonBookAntrian::findOrFail($id);
+
+//         // Allow updates to COMPLETED, PENDING, or CANCELLED without restriction
+//         if (in_array($validatedData['status'], ['COMPLETED', 'PENDING', 'CANCELLED'])) {
+//             $nonBookAntrian->status = $validatedData['status'];
+//         } elseif ($validatedData['status'] === 'NOW' && !$hasNowStatus) {
+//             // If status is NOW and no other record has 'NOW', allow the update
+//             $nonBookAntrian->status = 'NOW';
+//         }
+
+//         // Save the updated status
+//         $nonBookAntrian->save();
+
+//         return redirect()->route('non_bookantrian.index')->with('success', 'Non-BookAntrian status updated successfully!');
+//     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+//         // Handle case where the record is not found
+//         return redirect()->back()->withErrors(['status' => 'Non-BookAntrian record not found.']);
+//     } catch (\Exception $e) {
+//         // Log the error for debugging
+//         \Log::error('Error updating Non-BookAntrian status: ' . $e->getMessage());
+
+//         // Return a generic error response
+//         return redirect()->back()->withErrors(['status' => 'Failed to update Non-BookAntrian status. Please try again later.']);
+//     }
+// }
+
+public function update(Request $request, $id)
 {
     try {
         // Validate the status input
@@ -134,29 +180,19 @@ class NonBookAntrianController extends Controller
             'status' => 'required|string|in:PENDING,COMPLETED,CANCELLED,NOW', // Status must be one of these values
         ]);
 
-        // Check if the status is 'NOW'
-        if ($validatedData['status'] === 'NOW') {
-            // Check if any NonBookAntrian record already has the status 'NOW'
-            $hasNowStatus = NonBookAntrian::where('status', 'NOW')->exists();
-
-            if ($hasNowStatus) {
-                // If there's already a record with status 'NOW', prevent the update
-                return redirect()->back()->withErrors(['status' => 'Tidak Dapat di ganti status SEKARANG/NOW karna ada ANTRIAN YANG BELUM DI UPDATE']);
-            }
-        }
-
         // Find the NonBookAntrian record
         $nonBookAntrian = NonBookAntrian::findOrFail($id);
 
-        // Allow updates to COMPLETED, PENDING, or CANCELLED without restriction
-        if (in_array($validatedData['status'], ['COMPLETED', 'PENDING', 'CANCELLED'])) {
-            $nonBookAntrian->status = $validatedData['status'];
-        } elseif ($validatedData['status'] === 'NOW' && !$hasNowStatus) {
-            // If status is NOW and no other record has 'NOW', allow the update
-            $nonBookAntrian->status = 'NOW';
+        // Check if the status is 'NOW'
+        if ($validatedData['status'] === 'NOW') {
+            // Set all other records to 'PENDING' if one is already set to 'NOW'
+            NonBookAntrian::where('status', 'NOW')
+                ->where('id', '!=', $id) // Exclude the current record
+                ->update(['status' => 'PENDING']);
         }
 
-        // Save the updated status
+        // Update the status of the current record
+        $nonBookAntrian->status = $validatedData['status'];
         $nonBookAntrian->save();
 
         return redirect()->route('non_bookantrian.index')->with('success', 'Non-BookAntrian status updated successfully!');
@@ -171,6 +207,7 @@ class NonBookAntrianController extends Controller
         return redirect()->back()->withErrors(['status' => 'Failed to update Non-BookAntrian status. Please try again later.']);
     }
 }
+
 
 
     /**

@@ -46,42 +46,94 @@ class BookAntrianController extends Controller
     // // Return only the necessary data for the AJAX request
     // return response()->json(['currentAntrian' => $currentAntrian]);
     // }
-    public function showCurrentAntrian()
-    {
-        // Fetch the entry with status NOW from BookAntrian
-        $currentAntrian = BookAntrian::where('status', 'NOW')->first();
+    // public function showCurrentAntrian()
+    // {
+    //     // Fetch the entry with status NOW from BookAntrian
+    //     $currentAntrian = BookAntrian::where('status', 'NOW')->first();
 
-        // Fetch the entry with status NOW from NonBookAntrian
-        $currentOfflineAntrian = NonBookAntrian::where('status', 'NOW')->first();
+    //     // Fetch the entry with status NOW from NonBookAntrian
+    //     $currentOfflineAntrian = NonBookAntrian::where('status', 'NOW')->first();
 
-        // Return the Blade view with both currentAntrian and currentOfflineAntrian
-        return view('admin.Bookantrian.booking-antrian', compact('currentAntrian', 'currentOfflineAntrian'));
-    }
+    //     // Return the Blade view with both currentAntrian and currentOfflineAntrian
+    //     return view('admin.Bookantrian.booking-antrian', compact('currentAntrian', 'currentOfflineAntrian'));
+    // }
 
-    public function fetchCurrentAntrian()
-    {
-        // Fetch the entry with status NOW from BookAntrian
-        $currentAntrian = BookAntrian::where('status', 'NOW')->first();
+    // public function fetchCurrentAntrian()
+    // {
+    //     // Fetch the entry with status NOW from BookAntrian
+    //     $currentAntrian = BookAntrian::where('status', 'NOW')->first();
         
-        // Fetch the entry with status NOW from NonBookAntrian
-        $currentOfflineAntrian = NonBookAntrian::where('status', 'NOW')->first();
+    //     // Fetch the entry with status NOW from NonBookAntrian
+    //     $currentOfflineAntrian = NonBookAntrian::where('status', 'NOW')->first();
 
-        // Return only the necessary data for the AJAX request
-        return response()->json([
-            'currentAntrian' => $currentAntrian,
-            'currentOfflineAntrian' => $currentOfflineAntrian
-        ]);
-    }
-     // New function to return JSON data
+    //     // Return only the necessary data for the AJAX request
+    //     return response()->json([
+    //         'currentAntrian' => $currentAntrian,
+    //         'currentOfflineAntrian' => $currentOfflineAntrian
+    //     ]);
+    // }
+    public function showCurrentAntrian()
+{
+    // Get today's date
+    $today = now()->format('Y-m-d');
+
+    // Fetch the entry with status NOW and today's date from BookAntrian
+    $currentAntrian = BookAntrian::where('status', 'NOW')
+        ->whereDate('created_at', $today)
+        ->first();
+
+    // Fetch the entry with status NOW and today's date from NonBookAntrian
+    $currentOfflineAntrian = NonBookAntrian::where('status', 'NOW')
+        ->whereDate('created_at', $today)
+        ->first();
+
+    // Return the Blade view with both currentAntrian and currentOfflineAntrian
+    return view('admin.Bookantrian.booking-antrian', compact('currentAntrian', 'currentOfflineAntrian'));
+}
+
+public function fetchCurrentAntrian()
+{
+    // Get today's date
+    $today = now()->format('Y-m-d');
+
+    // Fetch the entry with status NOW and today's date from BookAntrian
+    $currentAntrian = BookAntrian::where('status', 'NOW')
+        ->whereDate('created_at', $today)
+        ->first();
+    
+    // Fetch the entry with status NOW and today's date from NonBookAntrian
+    $currentOfflineAntrian = NonBookAntrian::where('status', 'NOW')
+        ->whereDate('created_at', $today)
+        ->first();
+
+    // Return only the necessary data for the AJAX request
+    return response()->json([
+        'currentAntrian' => $currentAntrian,
+        'currentOfflineAntrian' => $currentOfflineAntrian
+    ]);
+}
+
+     // New function to return JSON data FOR API
      public function getCurrentAntrianJson()
      {
-         $currentAntrian = BookAntrian::where('status', 'NOW')->first();
-         $currentOfflineAntrian = NonBookAntrian::where('status', 'NOW')->first();
- 
-         return response()->json([
-             'currentAntrian' => $currentAntrian,
-             'currentOfflineAntrian' => $currentOfflineAntrian
-         ]);
+         // Get today's date
+    $today = now()->format('Y-m-d');
+
+    // Fetch the entry with status NOW and today's date from BookAntrian
+    $currentAntrian = BookAntrian::where('status', 'NOW')
+        ->whereDate('created_at', $today)
+        ->first();
+    
+    // Fetch the entry with status NOW and today's date from NonBookAntrian
+    $currentOfflineAntrian = NonBookAntrian::where('status', 'NOW')
+        ->whereDate('created_at', $today)
+        ->first();
+
+    // Return only the necessary data for the AJAX request
+    return response()->json([
+        'currentAntrian' => $currentAntrian,
+        'currentOfflineAntrian' => $currentOfflineAntrian
+    ]);
      }
 
 
@@ -164,7 +216,53 @@ class BookAntrianController extends Controller
     /**
      * Update a specific BookAntrian record.
      */
-    public function update(Request $request, $id)
+//     public function update(Request $request, $id)
+// {
+//     try {
+//         // Validate the status input
+//         $validatedData = $request->validate([
+//             'status' => 'required|string|in:PENDING,COMPLETED,CANCELLED,NOW', // Status must be one of these values
+//         ]);
+
+//         // Check if the status is 'NOW'
+//         if ($validatedData['status'] === 'NOW') {
+//             // Check if any BookAntrian record already has the status 'NOW'
+//             $hasNowStatus = BookAntrian::where('status', 'NOW')->exists();
+
+//             if ($hasNowStatus) {
+//                 // If there's already a record with status 'NOW', prevent the update
+//                 return redirect()->back()->withErrors(['status' => 'Tidak Dapat di ganti status SEKARANG/NOW karna ada ANTRIAN YANG BELUM DI UPDATE']);
+//             }
+//         }
+
+//         // Find the BookAntrian record
+//         $bookantrian = BookAntrian::findOrFail($id);
+
+//         // Allow updates to COMPLETED, PENDING, or CANCELLED without restriction
+//         if (in_array($validatedData['status'], ['COMPLETED', 'PENDING', 'CANCELLED'])) {
+//             $bookantrian->status = $validatedData['status'];
+//         } elseif ($validatedData['status'] === 'NOW' && !$hasNowStatus) {
+//             // If status is NOW and no other record has 'NOW', allow the update
+//             $bookantrian->status = 'NOW';
+//         }
+
+//         // Save the updated status
+//         $bookantrian->save();
+
+//         return redirect()->route('bookantrian.index')->with('success', 'Book Antrian status updated successfully!');
+//     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+//         // Handle case where the record is not found
+//         return redirect()->back()->withErrors(['status' => 'Book Antrian record not found.']);
+//     } catch (\Exception $e) {
+//         // Log the error for debugging
+//         \Log::error('Error updating Book Antrian status: ' . $e->getMessage());
+
+//         // Return a generic error response
+//         return redirect()->back()->withErrors(['status' => 'Failed to update Book Antrian status. Please try again later.']);
+//     }
+// }
+
+public function update(Request $request, $id)
 {
     try {
         // Validate the status input
@@ -172,27 +270,20 @@ class BookAntrianController extends Controller
             'status' => 'required|string|in:PENDING,COMPLETED,CANCELLED,NOW', // Status must be one of these values
         ]);
 
-        // Check if the status is 'NOW'
-        if ($validatedData['status'] === 'NOW') {
-            // Check if any BookAntrian record already has the status 'NOW'
-            $hasNowStatus = BookAntrian::where('status', 'NOW')->exists();
-
-            if ($hasNowStatus) {
-                // If there's already a record with status 'NOW', prevent the update
-                return redirect()->back()->withErrors(['status' => 'Tidak Dapat di ganti status SEKARANG/NOW karna ada ANTRIAN YANG BELUM DI UPDATE']);
-            }
-        }
-
         // Find the BookAntrian record
         $bookantrian = BookAntrian::findOrFail($id);
 
-        // Allow updates to COMPLETED, PENDING, or CANCELLED without restriction
-        if (in_array($validatedData['status'], ['COMPLETED', 'PENDING', 'CANCELLED'])) {
-            $bookantrian->status = $validatedData['status'];
-        } elseif ($validatedData['status'] === 'NOW' && !$hasNowStatus) {
-            // If status is NOW and no other record has 'NOW', allow the update
-            $bookantrian->status = 'NOW';
+        // Check if the status is 'NOW'
+        if ($validatedData['status'] === 'NOW') {
+            // If the current status is not NOW, change other records to PENDING
+            if ($bookantrian->status !== 'NOW') {
+                // Update any existing NOW status to PENDING
+                BookAntrian::where('status', 'NOW')->update(['status' => 'PENDING']);
+            }
         }
+
+        // Allow updates to COMPLETED, PENDING, or CANCELLED without restriction
+        $bookantrian->status = $validatedData['status'];
 
         // Save the updated status
         $bookantrian->save();
@@ -209,6 +300,7 @@ class BookAntrianController extends Controller
         return redirect()->back()->withErrors(['status' => 'Failed to update Book Antrian status. Please try again later.']);
     }
 }
+
 
 
 
