@@ -130,6 +130,13 @@
                     <li><a href="{{ route('obats.index') }}">List Obat</a></li>
                     <li><a href="{{ route('polikliniks.index') }}">List Poliklinik</a></li>        
                 </ul>
+                <!-- Expandable Sub Lab Menu -->
+                <li class="expandable-menu">Laboratorium</li>
+                <ul class="child-menu">
+                    <li><a href="{{ route('category_lab.index') }}">Sub Category Lab</a></li>      
+                    <li><a href="{{ route('jenis_pemeriksaan.index') }}">Jenis Pemeriksaan</a></li>      
+                    <li><a href="{{ route('hasil_lab.index') }}">Hasil Lab</a></li>      
+                </ul>
 
                 <!-- Expandable Reports Menu -->
                 <li class="expandable-menu">Antrian Offline</li>

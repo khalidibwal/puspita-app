@@ -48,4 +48,8 @@ class Book_RM extends Model
     {
         return $this->belongsTo(ApiUser::class, 'userId', 'id'); // Adjust 'id' based on your actual primary key in user_app table
     }
+    public function hasilLabs()
+    {
+        return $this->hasMany(HasilLab::class, 'idRekamMedis', 'idRekamMedis');
+    }
 }

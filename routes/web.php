@@ -17,7 +17,11 @@ use App\Http\Controllers\NonBookAntrianController;
 use App\Http\Controllers\BookAntrianController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BookRM_Controller;
+use App\Http\Controllers\pdf\dokterExport;
 use App\Models\BookAntrian;
+use App\Http\Controllers\lab\LabCategoryController;
+use App\Http\Controllers\lab\JenisPKController;
+use App\Http\Controllers\lab\hasilLabController;
 
 
 /*
@@ -57,6 +61,9 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::resource('admin/non_bookantrian', NonBookAntrianController::class); 
     Route::resource('admin/bookantrian', BookAntrianController::class); 
     Route::resource('admin/book_rm', BookRM_Controller::class); 
+    Route::resource('admin/category_lab', LabCategoryController::class); 
+    Route::resource('admin/jenis_pemeriksaan', JenisPKController::class); 
+    Route::resource('admin/hasil_lab', hasilLabController::class); 
 });
 //login example
 Route::get('/loginpuspita', [LoginController::class, 'showLoginForm'])->name('login.puspita');
@@ -72,6 +79,10 @@ Route::post('/registerpuspita', [RegisterController::class, 'register']);
 //signup Medika
 Route::get('/registerMedika', [MedikaRegisterController::class, 'showRegistrationForm'])->name('register.medika');
 Route::post('/registerMedika', [MedikaRegisterController::class, 'register']);
+//export PDF
+Route::get('/export-pdf', [dokterExport::class, 'exportPDF'])->name('export.dokter');
+//export PDF Hasil Lab
+Route::get('/hasil-lab/{id}/download-pdf', [hasilLabController::class, 'downloadPDF'])->name('hasil_lab.download_pdf');
 
 
 
