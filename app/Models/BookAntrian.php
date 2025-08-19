@@ -16,10 +16,13 @@ class BookAntrian extends Model
     protected $fillable = [
         'no_antrian',
         'keluhan',
+        'alergi',
+        'waktu_kunjungan',
         'tanggal_kunjungan',
         'status',
         'user_id',       // Foreign key reference to user
         'poliklinikId',  // Foreign key reference to poliklinik
+        'dokterNip',  // Foreign key reference to poliklinik
     ];
 
     // Relationship with the User model (assuming user is stored in user_app table)
@@ -32,5 +35,10 @@ class BookAntrian extends Model
     public function poliklinik()
     {
         return $this->belongsTo(medikaPoliklinik::class, 'poliklinikId', 'idPoliklinik');
+    }
+    // Relationship with the dokter model
+    public function dokter()
+    {
+        return $this->belongsTo(medikaDokter::class, 'dokterNip', 'nip');
     }
 }

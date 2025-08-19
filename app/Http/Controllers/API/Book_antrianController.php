@@ -29,10 +29,13 @@ class Book_antrianController extends Controller
     {
         // Validate the request
         $validatedData = $request->validate([
-            'keluhan' => 'required|string',
-            'tanggal_kunjungan' => 'required|date',
-            'poliklinikId' => 'required|integer|exists:poliklinik,idPoliklinik', // Ensure poliklinikId exists in the poliklinik table
-        ]);
+    'keluhan' => 'required|string',
+    'alergi' => 'nullable|string', // tambahkan ini
+    'waktu_kunjungan' => 'required|string', // tambahkan ini
+    'tanggal_kunjungan' => 'required|date',
+    'poliklinikId' => 'required|integer|exists:poliklinik,idPoliklinik',
+    'dokterNip' => 'required|string',
+]);
 
         // Get the last `no_antrian` value from the database
         $lastAntrian = BookAntrian::whereDate('tanggal_kunjungan', $validatedData['tanggal_kunjungan'])
@@ -48,10 +51,13 @@ class Book_antrianController extends Controller
         $bookantrian = BookAntrian::create([
             'no_antrian' => $newAntrian,
             'keluhan' => $validatedData['keluhan'],
+            'alergi' => $validatedData['alergi'],
+            'waktu_kunjungan' => $validatedData['waktu_kunjungan'],
             'tanggal_kunjungan' => $validatedData['tanggal_kunjungan'],
             'status' => 'PENDING',
             'user_id' => Auth::id(),
             'poliklinikId' => $validatedData['poliklinikId'], // Add poliklinikId here
+            'dokterNip' =>$validatedData['dokterNip'],
         ]);
 
         return response()->json([

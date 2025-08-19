@@ -155,7 +155,10 @@ public function fetchCurrentAntrian()
         $request->validate([
             'keluhan' => 'required|string',
             'tanggal_kunjungan' => 'required|date',
+            'waktu_kunjungan' => 'required|string',
+            'alergi' => 'required|string',
             'poliklinikId' => 'required|integer|exists:poliklinik,idPoliklinik', // Validate foreign key
+            'dokterNip' => 'required|integer|exists:dokter,nip', // Validate foreign key
         ]);
 
         // Get the last `no_antrian` value from the database for the specific date
@@ -176,9 +179,13 @@ public function fetchCurrentAntrian()
             'no_antrian' => $newAntrian,
             'keluhan' => $request->keluhan,
             'tanggal_kunjungan' => $request->tanggal_kunjungan,
+            'waktu_kunjungan' => $request->waktu_kunjungan,
+            'alergi' => $request->alergi,
             'status' => 'PENDING',
             'user_id' => Auth::id(),
             'poliklinikId' => $request->poliklinikId, // Include foreign key
+            'dokterNip' => $request->dokterNip, // Include foreign key
+            
         ]);
 
         // Redirect to the index page with success message

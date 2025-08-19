@@ -17,13 +17,17 @@ return new class extends Migration
             $table->id();
             $table->string('no_antrian', 20);               // Queue number
             $table->string('keluhan');
+            $table->string('alergi');
+            $table->string('waktu_kunjungan');
             $table->date('tanggal_kunjungan');              // Date of the visit
             $table->string('status', 50)->default('PENDING'); // Status of the booking
+            $table->string('dokterNip');
              // Foreign key reference to user_app table (userId)
              $table->unsignedBigInteger('user_id');  // The ID of the logged-in user
              $table->foreign('user_id')->references('id')->on('user_app')->onDelete('cascade');
              $table->unsignedInteger('poliklinikId');
             $table->foreign('poliklinikId')->references('idPoliklinik')->on('poliklinik')->onDelete('cascade');
+            $table->foreign('dokterNip')->references('nip')->on('dokter')->onDelete('cascade');
             $table->timestamps();
         });
     }
